@@ -60,25 +60,38 @@ const Quiz = () => {
   const [answers, setAnswers] = useState<number[]>([]);
 
   const handleAnswer = (selectedAnswer: number) => {
+    console.log('Answer selected:', selectedAnswer, 'for question:', currentQuestion);
+    
+    // Update answers array
     const newAnswers = [...answers, selectedAnswer];
     setAnswers(newAnswers);
+    console.log('Updated answers:', newAnswers);
 
+    // Update score if correct
     if (selectedAnswer === quizData[currentQuestion].correctAnswer) {
-      setScore(score + 1);
+      setScore(prevScore => {
+        const newScore = prevScore + 1;
+        console.log('Score updated to:', newScore);
+        return newScore;
+      });
     }
 
-    if (currentQuestion + 1 < quizData.length) {
-      setTimeout(() => {
-        setCurrentQuestion(currentQuestion + 1);
-      }, 1500);
-    } else {
-      setTimeout(() => {
+    // Move to next question or show results
+    setTimeout(() => {
+      const nextQuestion = currentQuestion + 1;
+      console.log('Moving to question:', nextQuestion, 'Total questions:', quizData.length);
+      
+      if (nextQuestion < quizData.length) {
+        setCurrentQuestion(nextQuestion);
+      } else {
+        console.log('Quiz completed, showing results');
         setShowResults(true);
-      }, 1500);
-    }
+      }
+    }, 1500);
   };
 
   const restartQuiz = () => {
+    console.log('Restarting quiz');
     setCurrentQuestion(0);
     setScore(0);
     setShowResults(false);
@@ -87,6 +100,7 @@ const Quiz = () => {
   };
 
   const startQuiz = () => {
+    console.log('Starting quiz');
     setQuizStarted(true);
   };
 
@@ -124,6 +138,8 @@ const Quiz = () => {
 
   const progress = ((currentQuestion + 1) / quizData.length) * 100;
 
+  console.log('Rendering question:', currentQuestion, 'Progress:', progress);
+
   return (
     <div className="max-w-2xl mx-auto">
       <div className="mb-6">
@@ -132,7 +148,7 @@ const Quiz = () => {
             Question {currentQuestion + 1} of {quizData.length}
           </span>
           <span className="text-sm font-medium text-gray-600">
-            Score: {score}/{currentQuestion + 1}
+            Score: {score}/{answers.length}
           </span>
         </div>
         <Progress value={progress} className="h-2" />

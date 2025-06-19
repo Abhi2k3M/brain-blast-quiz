@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, XCircle } from "lucide-react";
@@ -20,9 +20,17 @@ const Question = ({ question, onAnswer, questionNumber }: QuestionProps) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
 
+  // Reset state when question changes
+  useEffect(() => {
+    console.log('Question changed, resetting state for question:', questionNumber);
+    setSelectedAnswer(null);
+    setShowFeedback(false);
+  }, [question.id, questionNumber]);
+
   const handleAnswerClick = (answerIndex: number) => {
     if (showFeedback) return;
 
+    console.log('Answer clicked:', answerIndex);
     setSelectedAnswer(answerIndex);
     setShowFeedback(true);
     onAnswer(answerIndex);
